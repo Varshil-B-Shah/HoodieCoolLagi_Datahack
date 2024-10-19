@@ -13,6 +13,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import Home from "./components/Home.jsx";
+import Footer from "./components/Footer.jsx";
+import Analysis from "./components/Analysis.jsx";
 
 const vertexShaderSource = `
   attribute vec4 aVertexPosition;
@@ -285,7 +287,7 @@ export default function App() {
                 path="/"
                 element={
                   <>
-                    <div className="flex flex-col">
+                    <div className="relative">
                       <div>
                         <SignedIn>
                           <Navigate to="/home" replace />
@@ -301,14 +303,11 @@ export default function App() {
                               shaders, providing a cutting-edge visual
                               experience.
                             </p>
+                            <Footer />
                           </div>
                         </SignedOut>
                       </div>
-                      <footer className="p-4 text-center absolute bottom-0">
-                        <p className="text-sm text-green-200">
-                          © 2024 CyberSecure. All rights reserved.
-                        </p>
-                      </footer>
+                      
                     </div>
                   </>
                 }
@@ -326,6 +325,7 @@ export default function App() {
                   </>
                 }
               />
+              <Route path="/analysis" element={<Analysis />} />
             </Routes>
           </main>
 

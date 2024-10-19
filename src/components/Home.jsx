@@ -1,6 +1,7 @@
 import React from "react";
 import { useUser } from "@clerk/clerk-react";
 import { FileText, Book } from "lucide-react";
+import Footer from "./Footer";
 
 export default function Home() {
   const { user } = useUser();
@@ -38,11 +39,7 @@ export default function Home() {
           </button>
         </div>
       </div>
-      <footer className="p-4 text-center">
-        <p className="text-sm text-green-200">
-          © 2024 CyberSecure. All rights reserved.
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }
