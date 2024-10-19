@@ -1,6 +1,7 @@
 import React from "react";
 import { useUser } from "@clerk/clerk-react";
 import { FileText, Book } from "lucide-react";
+import Footer from "./Footer";
 
 export default function Home() {
   const { user } = useUser();
@@ -18,15 +19,19 @@ export default function Home() {
           <h2 className="text-2xl font-bold mb-3 text-green-400">
             Start Analysis
           </h2>
-          <p className="text-green-100 mb-4">Begin your security assessment now.</p>
+          <p className="text-green-100 mb-4">
+            Begin your security assessment now.
+          </p>
           <button className="bg-green-500 text-black text-lg font-bold py-2 px-4 rounded hover:bg-green-400 transition-colors w-full">
-            Let's Go!
+            <a href="/analysis">Let's Go!</a>
           </button>
         </div>
         <div className="flex space-x-4">
           <button className="bg-gray-800 p-4 rounded-lg shadow-md hover:bg-gray-700 transition-colors flex-1 flex flex-col items-center justify-center h-32">
             <FileText className="text-green-400" size={32} />
-            <span className="text-sm text-green-100 mt-2 block">Final Report</span>
+            <span className="text-sm text-green-100 mt-2 block">
+              Final Report
+            </span>
           </button>
           <button className="bg-gray-800 p-4 rounded-lg shadow-md hover:bg-gray-700 transition-colors flex-1 flex flex-col items-center justify-center h-32">
             <Book className="text-green-400" size={32} />
@@ -34,6 +39,7 @@ export default function Home() {
           </button>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
