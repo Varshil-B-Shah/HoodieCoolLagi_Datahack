@@ -1,40 +1,46 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Send, Upload } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { Send, Upload } from "lucide-react";
 
 const Analysis = () => {
   const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState('');
+  const [inputMessage, setInputMessage] = useState("");
   const [inputFile, setInputFile] = useState(null);
   const messagesEndRef = useRef(null);
 
   const sendMessage = () => {
-    if (inputMessage.trim() !== '' || inputFile) {
+    if (inputMessage.trim() !== "" || inputFile) {
       let newMessages = [...messages];
-      if (inputMessage.trim() !== '') {
-        newMessages.push({ text: inputMessage, sender: 'user' });
+      if (inputMessage.trim() !== "") {
+        newMessages.push({ text: inputMessage, sender: "user" });
       }
       if (inputFile) {
-        newMessages.push({ text: `Uploaded file: ${inputFile.name}`, sender: 'user' });
+        newMessages.push({
+          text: `Uploaded file: ${inputFile.name}`,
+          sender: "user",
+        });
         setInputFile(null);
       }
       setMessages(newMessages);
-      setInputMessage('');
+      setInputMessage("");
 
       // Simulate bot response
       setTimeout(() => {
-        setMessages((prev) => [...prev, { text: 'This is a simulated response.', sender: 'bot' }]);
+        setMessages((prev) => [
+          ...prev,
+          { text: "This is a simulated response.", sender: "bot" },
+        ]);
       }, 1000);
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       sendMessage();
     }
   };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
@@ -42,12 +48,22 @@ const Analysis = () => {
       className="flex flex-col h-screen w-full absolute inset-0 z-10" // Ensure it's on top
     >
       {/* Message Area */}
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-900 bg-opacity-70 text-green-400">
+      <div
+        className="flex-1 overflow-y-auto p-4 bg-gray-900 bg-opacity-70 text-green-400 cyber-scrollbar"
+        style={{ scrollbarWidth: "thin", scrollbarColor: "#2c7b41 #0c1018" }} // Fallback for Firefox
+      >
         {messages.map((message, index) => (
-          <div key={index} className={`mb-4 ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
+          <div
+            key={index}
+            className={`mb-4 ${
+              message.sender === "user" ? "text-right" : "text-left"
+            }`}
+          >
             <span
               className={`inline-block p-2 rounded-lg ${
-                message.sender === 'user' ? 'bg-green-700 text-white' : 'bg-gray-800 text-green-400'
+                message.sender === "user"
+                  ? "bg-green-700 text-white"
+                  : "bg-gray-800 text-green-400"
               }`}
             >
               {message.text}
