@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect } from "react";
 
 const vertexShaderSource = `
   attribute vec4 aVertexPosition;
@@ -8,7 +8,7 @@ const vertexShaderSource = `
     gl_Position = aVertexPosition;
     vTextureCoord = aTextureCoord;
   }
-`
+`;
 
 const fragmentShaderSource = `
   precision mediump float;
@@ -68,7 +68,7 @@ const fragmentShaderSource = `
     float finalNoise = (n1 * 0.5 + n2 * 0.35 + n3 * 0.15);
     
     // Adjust the color mix to favor black (70%) over green (30%)
-    vec3 color = mix(colorC, colorB, smoothstep(0.7, 0.9, finalNoise));
+    vec3 color = mix(colorC, colorB, smoothstep(0.6, 0.9, finalNoise));
     
     // Add some subtle variation over time
     color += vec3(0.0, 0.05, 0.02) * sin(uTime * 0.5 + uv.y * 10.0);
@@ -79,141 +79,167 @@ const fragmentShaderSource = `
 
     gl_FragColor = vec4(color, 1.0);
   }
-`
+`;
 
 function createShader(gl, type, source) {
-  const shader = gl.createShader(type)
-  gl.shaderSource(shader, source)
-  gl.compileShader(shader)
+  const shader = gl.createShader(type);
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.error('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader))
-    gl.deleteShader(shader)
-    return null
+    console.error(
+      "An error occurred compiling the shaders: " + gl.getShaderInfoLog(shader)
+    );
+    gl.deleteShader(shader);
+    return null;
   }
-  return shader
+  return shader;
 }
 
 function initShaderProgram(gl, vsSource, fsSource) {
-  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource)
-  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource)
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
+  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
 
-  const shaderProgram = gl.createProgram()
-  gl.attachShader(shaderProgram, vertexShader)
-  gl.attachShader(shaderProgram, fragmentShader)
-  gl.linkProgram(shaderProgram)
+  const shaderProgram = gl.createProgram();
+  gl.attachShader(shaderProgram, vertexShader);
+  gl.attachShader(shaderProgram, fragmentShader);
+  gl.linkProgram(shaderProgram);
 
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    console.error('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram))
-    return null
+    console.error(
+      "Unable to initialize the shader program: " +
+        gl.getProgramInfoLog(shaderProgram)
+    );
+    return null;
   }
 
-  return shaderProgram
+  return shaderProgram;
 }
 
 export default function App() {
-  const canvasRef = useRef(null)
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    const gl = canvas.getContext('webgl')
+    const canvas = canvasRef.current;
+    const gl = canvas.getContext("webgl");
 
     if (!gl) {
-      console.error('Unable to initialize WebGL. Your browser may not support it.')
-      return
+      console.error(
+        "Unable to initialize WebGL. Your browser may not support it."
+      );
+      return;
     }
 
-    const shaderProgram = initShaderProgram(gl, vertexShaderSource, fragmentShaderSource)
+    const shaderProgram = initShaderProgram(
+      gl,
+      vertexShaderSource,
+      fragmentShaderSource
+    );
 
     const programInfo = {
       program: shaderProgram,
       attribLocations: {
-        vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-        textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
+        vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+        textureCoord: gl.getAttribLocation(shaderProgram, "aTextureCoord"),
       },
       uniformLocations: {
-        time: gl.getUniformLocation(shaderProgram, 'uTime'),
-        resolution: gl.getUniformLocation(shaderProgram, 'uResolution'),
+        time: gl.getUniformLocation(shaderProgram, "uTime"),
+        resolution: gl.getUniformLocation(shaderProgram, "uResolution"),
       },
-    }
+    };
 
-    const positions = [
-      -1.0,  1.0,
-       1.0,  1.0,
-      -1.0, -1.0,
-       1.0, -1.0,
-    ]
+    const positions = [-1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0];
 
-    const textureCoordinates = [
-      0.0,  1.0,
-      1.0,  1.0,
-      0.0,  0.0,
-      1.0,  0.0,
-    ]
+    const textureCoordinates = [0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0];
 
-    const positionBuffer = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    const textureCoordBuffer = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW)
+    const textureCoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array(textureCoordinates),
+      gl.STATIC_DRAW
+    );
 
-    let then = 0
+    let then = 0;
 
     function render(now) {
-      now *= 0.001  // convert to seconds
-      const deltaTime = now - then
-      then = now
+      now *= 0.001; // convert to seconds
+      const deltaTime = now - then;
+      then = now;
 
-      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
-      gl.clearColor(0.0, 0.0, 0.0, 1.0)
-      gl.clear(gl.COLOR_BUFFER_BIT)
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+      gl.clearColor(0.0, 0.0, 0.0, 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
 
-      gl.useProgram(programInfo.program)
+      gl.useProgram(programInfo.program);
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
-      gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0)
-      gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition)
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.vertexAttribPointer(
+        programInfo.attribLocations.vertexPosition,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
+      gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer)
-      gl.vertexAttribPointer(programInfo.attribLocations.textureCoord, 2, gl.FLOAT, false, 0, 0)
-      gl.enableVertexAttribArray(programInfo.attribLocations.textureCoord)
+      gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
+      gl.vertexAttribPointer(
+        programInfo.attribLocations.textureCoord,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
+      gl.enableVertexAttribArray(programInfo.attribLocations.textureCoord);
 
-      gl.uniform1f(programInfo.uniformLocations.time, now)
-      gl.uniform2f(programInfo.uniformLocations.resolution, gl.canvas.width, gl.canvas.height)
+      gl.uniform1f(programInfo.uniformLocations.time, now);
+      gl.uniform2f(
+        programInfo.uniformLocations.resolution,
+        gl.canvas.width,
+        gl.canvas.height
+      );
 
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-      requestAnimationFrame(render)
+      requestAnimationFrame(render);
     }
 
     function resizeCanvas() {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-      gl.viewport(0, 0, canvas.width, canvas.height)
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      gl.viewport(0, 0, canvas.width, canvas.height);
     }
 
-    window.addEventListener('resize', resizeCanvas)
-    resizeCanvas()
-    requestAnimationFrame(render)
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    requestAnimationFrame(render);
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas)
-      gl.deleteProgram(shaderProgram)
-    }
-  }, [])
+      window.removeEventListener("resize", resizeCanvas);
+      gl.deleteProgram(shaderProgram);
+    };
+  }, []);
 
   return (
     <div className="relative w-full h-screen bg-black">
       <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
       <div className="relative z-10 flex items-center justify-center h-full">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4 text-[#00ff66]">Cybersecurity Pulse</h1>
+          <h1 className="text-4xl font-bold mb-4 text-[#00ff66]">
+            Cybersecurity Pulse
+          </h1>
           <p className="text-xl max-w-lg mx-auto text-[#00cc66]">
-            This React app features an animated cybersecurity-themed background effect using WebGL shaders.
+            This React app features an animated cybersecurity-themed background
+            effect using WebGL shaders.
           </p>
         </div>
       </div>
     </div>
-  )
+  );
 }
