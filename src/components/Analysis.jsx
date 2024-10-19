@@ -43,6 +43,9 @@ const Analysis = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  console.log(inputFile);
+  
+
   return (
     <div
       className="flex flex-col h-screen w-full absolute inset-0 z-10" // Ensure it's on top
