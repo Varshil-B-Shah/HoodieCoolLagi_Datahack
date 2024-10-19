@@ -1,6 +1,17 @@
 import React, { useRef, useEffect } from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton, RedirectToSignIn } from "@clerk/clerk-react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+  RedirectToSignIn,
+} from "@clerk/clerk-react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import Home from "./components/Home.jsx";
 
 const vertexShaderSource = `
@@ -229,7 +240,9 @@ function WebGLBackground() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />;
+  return (
+    <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
+  );
 }
 
 export default function App() {
@@ -272,21 +285,31 @@ export default function App() {
                 path="/"
                 element={
                   <>
-                    <SignedIn>
-                      <Navigate to="/home" replace />
-                    </SignedIn>
-                    <SignedOut>
-                      <div className="text-center px-4 max-w-3xl mx-auto">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-8 animate-pulse text-green-300">
-                          Welcome to CyberSecure
-                        </h1>
-                        <p className="text-lg md:text-xl leading-relaxed mb-8 text-green-100 bg-black bg-opacity-40 p-6 rounded-lg shadow-lg">
-                          This React app features an animated cybersecurity-themed
-                          background effect using WebGL shaders, providing a cutting-edge
-                          visual experience.
-                        </p>
+                    <div className="flex flex-col">
+                      <div>
+                        <SignedIn>
+                          <Navigate to="/home" replace />
+                        </SignedIn>
+                        <SignedOut>
+                          <div className="text-center px-4 max-w-3xl mx-auto">
+                            <h1 className="text-4xl md:text-5xl font-bold mb-8 animate-pulse text-green-300">
+                              Welcome to CyberSecure
+                            </h1>
+                            <p className="text-lg md:text-xl leading-relaxed mb-8 text-green-100 bg-black bg-opacity-40 p-6 rounded-lg shadow-lg">
+                              This React app features an animated
+                              cybersecurity-themed background effect using WebGL
+                              shaders, providing a cutting-edge visual
+                              experience.
+                            </p>
+                          </div>
+                        </SignedOut>
                       </div>
-                    </SignedOut>
+                      <footer className="p-4 text-center absolute bottom-0">
+                        <p className="text-sm text-green-200">
+                          © 2024 CyberSecure. All rights reserved.
+                        </p>
+                      </footer>
+                    </div>
                   </>
                 }
               />
@@ -307,11 +330,6 @@ export default function App() {
           </main>
 
           {/* Footer */}
-          <footer className="p-4 text-center">
-            <p className="text-sm text-green-200">
-              © 2024 CyberSecure. All rights reserved.
-            </p>
-          </footer>
         </div>
       </div>
     </Router>
