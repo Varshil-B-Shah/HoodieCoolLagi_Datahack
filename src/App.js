@@ -68,7 +68,7 @@ const fragmentShaderSource = `
     float finalNoise = (n1 * 0.5 + n2 * 0.35 + n3 * 0.15);
     
     // Adjust the color mix to favor black (70%) over green (30%)
-    vec3 color = mix(colorC, colorB, smoothstep(0.7, 0.9, finalNoise));
+    vec3 color = mix(colorC, colorB, smoothstep(0.6, 0.9, finalNoise));
     
     // Add some subtle variation over time
     color += vec3(0.0, 0.05, 0.02) * sin(uTime * 0.5 + uv.y * 10.0);
@@ -79,7 +79,7 @@ const fragmentShaderSource = `
 
     gl_FragColor = vec4(color, 1.0);
   }
-`
+`;
 
 function createShader(gl, type, source) {
   const shader = gl.createShader(type)
