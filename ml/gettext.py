@@ -21,13 +21,13 @@ def extract_text_from_pdf(pdf_path):
         # Extract text from the page
         page_text = page.get_text("text")
         if page_text.strip():
-            text += f"\n\n--- Page {page_num + 1} ---\n\n" + page_text
+            text += f"\n--- Page {page_num + 1} ---\n" + page_text.replace('\n', ' ')
         else:
             # If no text is found, fall back to OCR (for scanned pages)
             pix = page.get_pixmap()
             image = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
             image_text = pytesseract.image_to_string(image)
-            text += f"\n\n--- Page {page_num + 1} (OCR) ---\n\n" + image_text
+            text += f"\n--- Page {page_num + 1} (OCR) ---\n" + image_text.replace('\n', ' ')
 
     return text
 
