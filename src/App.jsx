@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import Hello from "./components/Hello";
 
 const vertexShaderSource = `
   attribute vec4 aVertexPosition;
@@ -232,7 +233,7 @@ export default function App() {
       <div className="relative z-10 flex items-center justify-center h-full">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4 text-[#00ff66]">
-            Cybersecurity Pulse
+            <Hello />
           </h1>
           <p className="text-xl max-w-lg mx-auto text-[#00cc66]">
             This React app features an animated cybersecurity-themed background
