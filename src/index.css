@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom scrollbar with matching color */
+.cyber-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .cyber-scrollbar::-webkit-scrollbar-track {
+    background: #0c1018; /* Dark background, adjust if needed */
+  }
+  
+  .cyber-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #2c7b41; /* Matching green from the image */
+    border-radius: 10px;
+  }
+  
+  .cyber-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #1d5e2f; /* Slightly darker green on hover */
+  }
+  
