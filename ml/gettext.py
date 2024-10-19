@@ -1,0 +1,1 @@
+# extracts text from inpt files
