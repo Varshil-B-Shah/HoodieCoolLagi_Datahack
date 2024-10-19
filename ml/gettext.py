@@ -52,5 +52,5 @@ def process_file(file_path):
     print(f"Text extracted and saved to {output_path}")
 
 # Example usage
-file_path = "ml/DataHack 3.0 Problem Statements.pdf"  # Replace with the path to your PDF or image file
+file_path = "ml/NetworkSecurityPolicy_UPC_0.pdf"  # Replace with the path to your PDF or image file
 process_file(file_path)
