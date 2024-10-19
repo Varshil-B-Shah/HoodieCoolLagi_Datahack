@@ -1,5 +1,11 @@
 import React, { useRef, useEffect } from "react";
 import Hello from "./components/Hello";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
 
 const vertexShaderSource = `
   attribute vec4 aVertexPosition;
@@ -228,18 +234,57 @@ export default function App() {
   }, []);
 
   return (
-    <div className="relative w-full h-screen bg-black">
+    <div className="relative w-full h-screen bg-black text-green-400 font-mono">
       <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
-      <div className="relative z-10 flex items-center justify-center h-full">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4 text-[#00ff66]">
-            <Hello />
-          </h1>
-          <p className="text-xl max-w-lg mx-auto text-[#00cc66]">
-            This React app features an animated cybersecurity-themed background
-            effect using WebGL shaders.
+      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div className="relative z-10 h-full flex flex-col">
+        {/* Header */}
+        <header className="p-6 flex justify-between items-center">
+          <div className="text-xl font-bold text-green-300">CyberSecure</div>
+          <div>
+            <SignedIn>
+              <UserButton
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox:
+                      "w-12 h-12 border-2 border-green-400 shadow-lg shadow-green-400/50",
+                    userButtonPopoverCard:
+                      "bg-gray-800 border border-green-400 text-green-300",
+                  },
+                }}
+              />
+            </SignedIn>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="px-6 py-3 bg-green-500 text-black font-bold rounded-full hover:bg-green-400 transition-colors text-lg shadow-md hover:shadow-lg shadow-green-400/50 hover:shadow-green-400/50">
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center px-4 max-w-3xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold mb-8 animate-pulse text-green-300">
+              <SignedIn>Welcome back! You are signed in.</SignedIn>
+              <SignedOut>Welcome to CyberSecure</SignedOut>
+            </h1>
+            <p className="text-lg md:text-xl leading-relaxed mb-8 text-green-100 bg-black bg-opacity-40 p-6 rounded-lg shadow-lg">
+              This React app features an animated cybersecurity-themed
+              background effect using WebGL shaders, providing a cutting-edge
+              visual experience.
+            </p>
+          </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="p-4 text-center">
+          <p className="text-sm text-green-200">
+            © 2024 CyberSecure. All rights reserved.
           </p>
-        </div>
+        </footer>
       </div>
     </div>
   );
