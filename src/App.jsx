@@ -1,11 +1,7 @@
 import React, { useRef, useEffect } from "react";
-import Hello from "./components/Hello";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, UserButton, RedirectToSignIn } from "@clerk/clerk-react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import Home from "./components/Home.jsx";
 
 const vertexShaderSource = `
   attribute vec4 aVertexPosition;
@@ -122,7 +118,7 @@ function initShaderProgram(gl, vsSource, fsSource) {
   return shaderProgram;
 }
 
-export default function App() {
+function WebGLBackground() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -233,59 +229,91 @@ export default function App() {
     };
   }, []);
 
+  return <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />;
+}
+
+export default function App() {
   return (
-    <div className="relative w-full h-screen bg-black text-green-400 font-mono">
-      <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-      <div className="relative z-10 h-full flex flex-col">
-        {/* Header */}
-        <header className="p-6 flex justify-between items-center">
-          <div className="text-xl font-bold text-green-300">CyberSecure</div>
-          <div>
-            <SignedIn>
-              <UserButton
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox:
-                      "w-12 h-12 border-2 border-green-400 shadow-lg shadow-green-400/50",
-                    userButtonPopoverCard:
-                      "bg-gray-800 border border-green-400 text-green-300",
-                  },
-                }}
+    <Router>
+      <div className="relative w-full h-svh bg-black text-green-400 font-mono">
+        <WebGLBackground />
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div className="relative z-10 h-full flex flex-col">
+          {/* Header */}
+          <header className="p-6 flex justify-between items-center">
+            <div className="text-xl font-bold text-green-300">CyberSecure</div>
+            <div>
+              <SignedIn>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox:
+                        "w-12 h-12 border-2 border-green-400 shadow-lg shadow-green-400/50",
+                      userButtonPopoverCard:
+                        "bg-gray-800 border border-green-400 text-green-300",
+                    },
+                  }}
+                />
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="px-6 py-3 bg-green-500 text-black font-bold rounded-full hover:bg-green-400 transition-colors text-lg shadow-md hover:shadow-lg shadow-green-400/50 hover:shadow-green-400/50">
+                    Sign In
+                  </button>
+                </SignInButton>
+              </SignedOut>
+            </div>
+          </header>
+
+          {/* Main Content */}
+          <main className="flex-grow flex items-center justify-center">
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <>
+                    <SignedIn>
+                      <Navigate to="/home" replace />
+                    </SignedIn>
+                    <SignedOut>
+                      <div className="text-center px-4 max-w-3xl mx-auto">
+                        <h1 className="text-4xl md:text-5xl font-bold mb-8 animate-pulse text-green-300">
+                          Welcome to CyberSecure
+                        </h1>
+                        <p className="text-lg md:text-xl leading-relaxed mb-8 text-green-100 bg-black bg-opacity-40 p-6 rounded-lg shadow-lg">
+                          This React app features an animated cybersecurity-themed
+                          background effect using WebGL shaders, providing a cutting-edge
+                          visual experience.
+                        </p>
+                      </div>
+                    </SignedOut>
+                  </>
+                }
               />
-            </SignedIn>
-            <SignedOut>
-              <SignInButton mode="modal">
-                <button className="px-6 py-3 bg-green-500 text-black font-bold rounded-full hover:bg-green-400 transition-colors text-lg shadow-md hover:shadow-lg shadow-green-400/50 hover:shadow-green-400/50">
-                  Sign In
-                </button>
-              </SignInButton>
-            </SignedOut>
-          </div>
-        </header>
+              <Route
+                path="/home"
+                element={
+                  <>
+                    <SignedIn>
+                      <Home />
+                    </SignedIn>
+                    <SignedOut>
+                      <RedirectToSignIn />
+                    </SignedOut>
+                  </>
+                }
+              />
+            </Routes>
+          </main>
 
-        {/* Main Content */}
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center px-4 max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-8 animate-pulse text-green-300">
-              <SignedIn>Welcome back! You are signed in.</SignedIn>
-              <SignedOut>Welcome to CyberSecure</SignedOut>
-            </h1>
-            <p className="text-lg md:text-xl leading-relaxed mb-8 text-green-100 bg-black bg-opacity-40 p-6 rounded-lg shadow-lg">
-              This React app features an animated cybersecurity-themed
-              background effect using WebGL shaders, providing a cutting-edge
-              visual experience.
+          {/* Footer */}
+          <footer className="p-4 text-center">
+            <p className="text-sm text-green-200">
+              © 2024 CyberSecure. All rights reserved.
             </p>
-          </div>
-        </main>
-
-        {/* Footer */}
-        <footer className="p-4 text-center">
-          <p className="text-sm text-green-200">
-            © 2024 CyberSecure. All rights reserved.
-          </p>
-        </footer>
+          </footer>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 }
