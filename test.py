@@ -1,26 +1,15 @@
-import logging
-from flask import Flask, jsonify, request
-from flask_cors import CORS
 import requests
 from collections import deque
 import os
 from groq import Groq
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-
-# Create a Flask application instance
-app = Flask(__name__)
-
-# Configure CORS for the /test route
-CORS(app, resources={r"/test": {"origins": "*"}})
-
 client = Groq(
     api_key="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",
-)
+    )
 
-with open('prompt.txt', 'r') as file:
+with open('server/prompt.txt', 'r') as file:
     prompts = file.readlines()
+
 
 def checkcatogory(prompt):
     completion = client.chat.completions.create(
@@ -32,15 +21,17 @@ def checkcatogory(prompt):
             }
         ],
         temperature=1,
+        max_tokens=1024,
         top_p=1,
         stream=True,
         stop=None,
     )
 
-    ans = list()
+    ans=list()
     for chunk in completion:
         ans.append(chunk.choices[0].delta.content or "")
-    ans = "".join(ans)
+        #print(chunk.choices[0].delta.content or "", end="")
+    ans="".join(ans)
     return ans
 
 def summarise(prompt):
@@ -55,15 +46,17 @@ def summarise(prompt):
             }
         ],
         temperature=1,
+        max_tokens=1024,
         top_p=1,
         stream=True,
         stop=None,
     )
 
-    ans = list()
+    ans=list()
     for chunk in completion:
         ans.append(chunk.choices[0].delta.content or "")
-    ans = "".join(ans)
+        #print(chunk.choices[0].delta.content or "", end="")
+    ans="".join(ans)
     return ans
 
 def generateinitialquestions(prompt):
@@ -80,46 +73,44 @@ def generateinitialquestions(prompt):
             }
         ],
         temperature=1,
+        max_tokens=1024,
         top_p=1,
         stream=True,
         stop=None,
     )
 
-    ans = list()
+    ans=list()
     for chunk in completion:
         ans.append(chunk.choices[0].delta.content or "")
-    ans = "".join(ans)
-    ans = ans.split(',')
-    ans = [item.strip() for item in ans]
+        #print(chunk.choices[0].delta.content or "", end="")
+    ans="".join(ans)
+    ans=ans.split(',')
+    ans=[item.strip() for item in ans]
     return ans
 
-@app.route('/checkcategory', methods=['POST'])
-def check_category_route():
-    prompt = request.json.get('prompt')
-    result = checkcatogory(prompt)
-    return jsonify({"category": result})
 
-@app.route('/summarise', methods=['POST'])
-def summarise_route():
-    prompt = request.json.get('prompt')
-    result = summarise(prompt)
-    return jsonify({"summary": result})
+Network_Security = list()
+Data_Protection = list()
+Incident_Response = list()
+Compliance = list()
 
-@app.route('/generateinitialquestions', methods=['POST'])
-def generate_initial_questions_route():
-    prompt = request.json.get('prompt')
-    result = generateinitialquestions(prompt)
-    return jsonify({"questions": result})
+for prompt in prompts:
+    ans=checkcatogory(prompt)
+    if ans=="Network_Security":Network_Security.append(prompt)
+    elif ans=="Data_Protection":Data_Protection.append(prompt)
+    elif ans=="Incident_Response":Incident_Response.append(prompt)
+    elif ans=="Compliance":Compliance.append(prompt)
 
-@app.route('/test')
-def test():
-    return jsonify({"message": "This is a test JSON response"})
+network_security_sum = summarise('.'.join(Network_Security))
+data_protection_sum = summarise('.'.join(Data_Protection))
+incident_response_sum = summarise('.'.join(Incident_Response))
+compliance_sum = summarise('.'.join(Compliance))
 
-# Define a simple route to test the server
-@app.route('/')
-def home():
-    return "Hello, World!"
+network_security_questions=generateinitialquestions(network_security_sum)
+data_protection_questions=generateinitialquestions(data_protection_sum)
+incident_response_questions=generateinitialquestions(incident_response_sum)
+compliance_questions=generateinitialquestions(compliance_sum)
 
-# Run the Flask application on port 4000
-if __name__ == '__main__':
-    app.run(debug=True, port=4000)
+
+
+print(f"Network Security: {network_security_questions}")
