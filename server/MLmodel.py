@@ -7,7 +7,7 @@ client = Groq(
     api_key="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",
     )
 
-with open('prompt.txt', 'r') as file:
+with open('C:/Users/gadhr/Desktop/DH/HoodieCoolLagi_Datahack/server/prompt.txt', 'r') as file:
     prompts = file.readlines()
 
 
